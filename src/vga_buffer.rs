@@ -124,7 +124,7 @@ impl Writer {
 //     ^Cqemu-system-x86_64: terminating on signal 2 from pid 60304 (<unknown process>)").unwrap();
 //     writer.write_string("Running: `qemu-system-x86_64 -drive format=raw,file=target/x86_64-blog_os/debug/bootimage-blog_os.bin`
 //     ^Cqemu-system-x86_64: terminating on signal 2 from pid 60304 (<unknown process>)");
-}
+// }
 
 impl fmt::Write for Writer {
     fn write_str(&mut self, s: &str) -> fmt::Result {
