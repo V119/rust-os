@@ -110,22 +110,6 @@ impl Writer {
     }
 }
 
-// pub fn write_something() {
-//     let mut writer = Writer {
-//         colume_position: 0,
-//         color_code: ColorCode::new(Color::Yellow, Color::Blue),
-//         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
-//     };
-
-//     writer.write_byte(b'h');
-//     writer.write_string("ello");
-//     writer.write_string("Wörld!");
-//     write!(writer, "Running: `qemu-system-x86_64 -drive format=raw,file=target/x86_64-blog_os/debug/bootimage-blog_os.bin`
-//     ^Cqemu-system-x86_64: terminating on signal 2 from pid 60304 (<unknown process>)").unwrap();
-//     writer.write_string("Running: `qemu-system-x86_64 -drive format=raw,file=target/x86_64-blog_os/debug/bootimage-blog_os.bin`
-//     ^Cqemu-system-x86_64: terminating on signal 2 from pid 60304 (<unknown process>)");
-// }
-
 impl fmt::Write for Writer {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         self.write_string(s);
@@ -138,4 +122,21 @@ lazy_static! {
         color_code: ColorCode::new(Color::Yellow, Color::Blue),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     });
+}
+
+#[macro_export]
+macro_rules! print {
+    ($($args:tt)*) => ($crate::vga_buffer::_print(format_args!($($args)*)));
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($args:tt)*) => ($crate::print!("{}\n", format_args!($($args)*)));
+}
+
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+    use core::fmt::Write;
+    WRITER.lock().write_fmt(args).unwrap();
 }
