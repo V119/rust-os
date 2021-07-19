@@ -119,7 +119,7 @@ impl fmt::Write for Writer {
 lazy_static! {
     pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer {
         colume_position: 0,
-        color_code: ColorCode::new(Color::Yellow, Color::Blue),
+        color_code: ColorCode::new(Color::Yellow, Color::LightBlue),
         buffer: unsafe { &mut *(0xb8000 as *mut Buffer) },
     });
 }
@@ -139,4 +139,37 @@ macro_rules! println {
 pub fn _print(args: fmt::Arguments) {
     use core::fmt::Write;
     WRITER.lock().write_fmt(args).unwrap();
+}
+
+#[cfg(test)]
+use crate::{serial_print, serial_println};
+
+#[test_case]
+fn test_println_simple() {
+    serial_print!("test printlning...");
+    println!("test_println_simple output");
+    serial_println!("[ok]");
+}
+
+#[test_case]
+fn test_println_many() {
+    serial_print!("test println many....");
+    for _ in 0..200 {
+        println!("test print many output!");
+    }
+    serial_println!("[OK]");
+}
+
+#[test_case]
+fn test_println_output() {
+    serial_print!("test println output....");
+    let s = "Some test string that fits on a single line";
+    println!("{}", s);
+
+    for (i, c) in s.chars().enumerate() {
+        let screenChar = WRITER.lock().buffer.chars[BUFFER_HEIGH - 2][i].read();
+        assert_eq!(char::from(screenChar.ascii_character), c);
+    }
+
+    serial_println!("[OK]");
 }
