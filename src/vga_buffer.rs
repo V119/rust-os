@@ -137,7 +137,6 @@ macro_rules! println {
 
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
-    use core::fmt::Write;
     WRITER.lock().write_fmt(args).unwrap();
 }
 

@@ -6,8 +6,8 @@
 
 use core::panic::PanicInfo;
 
-mod serial;
-mod vga_buffer;
+pub mod serial;
+pub mod vga_buffer;
 
 pub fn test_runner(tests: &[&dyn Fn()]) {
     serial_println!("Running {} tests", tests.len());
@@ -17,7 +17,7 @@ pub fn test_runner(tests: &[&dyn Fn()]) {
     exit_qemu(QemuExitCode::Success);
 }
 
-pub fn test_panic_handle(info: &PanicInfo) -> ! {
+pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[Filed]\n");
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
@@ -34,7 +34,7 @@ pub extern "C" fn _start() {
 #[cfg(test)]
 #[panic_handler]
 pub fn panic_handler(info: &PanicInfo) -> ! {
-    test_panic_handle(info);
+    test_panic_handler(info);
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
