@@ -29,8 +29,24 @@ static HELLO: &[u8] = b"hello, world";
 pub extern "C" fn _start() -> ! {
     println!("hello word{}", "!");
 
+    // 触发中断
+    blog_os::init();
+
+    // 触发三重异常
+    fn stack_overflow() {
+        stack_overflow();
+    }
+
+    stack_overflow();
+
+    // // 触发page fault
+    // unsafe {
+    //     *(0xdeadbeef as *mut u64) = 42;
+    // }
+
     #[cfg(test)]
     test_main();
 
+    println!("it did not crash");
     loop {}
 }
