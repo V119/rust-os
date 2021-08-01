@@ -137,7 +137,11 @@ macro_rules! println {
 
 #[doc(hidden)]
 pub fn _print(args: fmt::Arguments) {
-    WRITER.lock().write_fmt(args).unwrap();
+    // 修复中断时打印信息导致的死锁,只要互斥锁Mutex是锁定的，就禁用中断
+    use x86_64::instructions::interrupts;
+    interrupts::without_interrupts(|| {
+        WRITER.lock().write_fmt(args).unwrap();
+    });
 }
 
 #[cfg(test)]

@@ -61,4 +61,6 @@ pub fn init() {
     gdt::init();
     // 运行中断
     interrupts::init_idt();
+    unsafe { interrupts::PICS.lock().initialize() };
+    x86_64::instructions::interrupts::enable();
 }

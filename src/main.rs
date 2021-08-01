@@ -48,5 +48,8 @@ pub extern "C" fn _start() -> ! {
     test_main();
 
     println!("it did not crash");
-    loop {}
+    loop {
+        // use crate::print;
+        // print!("-");
+    }
 }

@@ -11,13 +11,17 @@ lazy_static! {
 }
 
 #[doc(hidden)]
-pub fn _print(arg: ::core::fmt::Arguments) {
+pub fn _print(args: ::core::fmt::Arguments) {
     use core::fmt::Write;
 
-    SERIAL1
-        .lock()
-        .write_fmt(arg)
-        .expect("Printing to serial failed");
+    // 在打印的时候禁用中断，以免发生死锁
+    use x86_64::instructions::interrupts;
+    interrupts::without_interrupts(|| {
+        SERIAL1
+            .lock()
+            .write_fmt(args)
+            .expect("Printing to serial failed");
+    });
 }
 
 #[macro_export]
