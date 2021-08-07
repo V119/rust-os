@@ -33,11 +33,11 @@ pub extern "C" fn _start() -> ! {
     blog_os::init();
 
     // 触发三重异常
-    fn stack_overflow() {
-        stack_overflow();
-    }
+    // fn stack_overflow() {
+    //     stack_overflow();
+    // }
 
-    stack_overflow();
+    // stack_overflow();
 
     // // 触发page fault
     // unsafe {
@@ -49,7 +49,7 @@ pub extern "C" fn _start() -> ! {
 
     println!("it did not crash");
     loop {
-        // use crate::print;
-        // print!("-");
+        use crate::print;
+        print!("-");
     }
 }
